@@ -2,23 +2,48 @@ package org.koenigbrok.vic.projectRest.messanger.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.koenigbrok.vic.projectRest.messanger.database.DatabaseClass;
 import org.koenigbrok.vic.projectRest.messanger.model.Message;
 
+import com.sun.xml.bind.marshaller.Messages;
+
 public class messageService {
+	
+	private Map<Long, Message> messages = DatabaseClass.getMessages();
+	
+
+	public messageService() {
+		messages.put(1L, new Message(1, "hii", "me"));
+		messages.put(2L, new Message(2, "oh hai", "you"));
+	}
 
 	public List<Message> getAllMessages(){
-		Message m1 = new Message(1L, "hi wurld", "vic");
-		Message m2 = new Message(2L, "hi Mush", "vOc");
-		Message m3 = new Message(3L, "hi jersey", "vAc");
 		
-		List<Message> list = new ArrayList<Message>();
-		list.add(m1);
-		list.add(m2);
-		list.add(m3);
+		return new ArrayList<Message>(messages.values());	
+	}
+	
+	public Message getMessage(long id) {
+		return messages.get(id);
+	}
+	
+	public Message addMessage(Message message) {
+		message.setId(messages.size()+1);
+		messages.put(message.getId(), message);
+		return message;
 		
-		return list;
-		
-		
+	}
+	
+	public Message updateMessage(Message message) {
+		if(message.getId() <= 0) {
+			return null;
+		}
+		messages.put(message.getId(), message);
+		return message;
+	}
+	
+	public Message removeMessage(long id) {
+		return messages.remove(id);
 	}
 }
