@@ -17,6 +17,7 @@ public class messageService {
 	public messageService() {
 		messages.put(1L, new Message(1, "hii", "me"));
 		messages.put(2L, new Message(2, "oh hai", "you"));
+		messages.put(3L, new Message(3, "a simple hello would do, tvm", "them"));
 	}
 
 	public List<Message> getAllMessages(){
