@@ -10,6 +10,7 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.koenigbrok.vic.projectRest.messanger.model.Message;
@@ -22,9 +23,16 @@ public class messageTestResource {
 	
 	 @GET 
 	 @Produces(MediaType.APPLICATION_JSON)
-	public List<Message> getMessage() {
+	public List<Message> getMessage(@QueryParam("year") int year, @QueryParam("start") int start, @QueryParam("size") int size) {
+		 if(year > 0) {
+			 return ms.getAllMessagesByYear(year);
+		 }
+		 if(start >= 0 && size >= 0) {
+			 return ms.getAllMessagesPaginated(start, size);
+		 }
 		return  ms.getAllMessages();
 	}
+	
 	 
 	 @POST
 	 @Consumes(MediaType.APPLICATION_JSON)
