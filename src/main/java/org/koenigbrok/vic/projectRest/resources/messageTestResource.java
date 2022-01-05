@@ -17,6 +17,8 @@ import org.koenigbrok.vic.projectRest.messanger.model.Message;
 import org.koenigbrok.vic.projectRest.messanger.service.messageService;
 
 @Path("/messageTestResource")
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
 public class messageTestResource {
 
 	messageService ms = new messageService();
@@ -37,8 +39,6 @@ public class messageTestResource {
 	
 	 
 	 @POST
-	 @Consumes(MediaType.APPLICATION_JSON)
-	 @Produces(MediaType.APPLICATION_JSON)
 		public Message  addMessage(Message message) {
 		return ms.addMessage(message);
 		}
@@ -46,7 +46,6 @@ public class messageTestResource {
 	 
 	 @GET
 	 @Path("/{messageId}")
-	 @Produces(MediaType.APPLICATION_JSON)
 	 public Message getMessage(@PathParam("messageId")  long messageId) {
 		  
 		return ms.getMessage(messageId);
@@ -54,8 +53,6 @@ public class messageTestResource {
 	 
 	 @PUT
 	 @Path("/{messageId}")
-	 @Consumes(MediaType.APPLICATION_JSON)
-	 @Produces(MediaType.APPLICATION_JSON)
 	 public Message updateMessage(@PathParam("messageId")  long messageId, Message message) {
 		  
 		 message.setId(messageId);
@@ -65,10 +62,16 @@ public class messageTestResource {
 	 
 	 @DELETE
 	 @Path("/{messageId}")
-	 @Produces(MediaType.APPLICATION_JSON)
 	 public void deleteMessage(@PathParam("messageId")  long messageId, Message message) {
 		   
 		 ms.removeMessage(messageId);
 		}
 	 
+	 
+	 
+	 @Path("/{messageId}/comments")
+	 public CommentResource getCommentResource() {
+		 
+		 return new CommentResource();
+	 }
 }
