@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.koenigbrok.vic.projectRest.messanger.database.DatabaseClass;
+import org.koenigbrok.vic.projectRest.messanger.exception.DataNotFoundException;
 import org.koenigbrok.vic.projectRest.messanger.model.Message;
 
 import com.sun.xml.bind.marshaller.Messages;
@@ -47,7 +48,11 @@ public class messageService {
 	}
 	
 	public Message getMessage(long id) {
-		return messages.get(id);
+		Message message =  messages.get(id);
+		if(message == null) {
+			throw new DataNotFoundException("meessage with id  "  + id + "....is furcked");
+		}
+		return message;
 	}
 	
 	public Message addMessage(Message message) {

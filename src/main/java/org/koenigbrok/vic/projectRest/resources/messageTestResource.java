@@ -1,5 +1,7 @@
 package org.koenigbrok.vic.projectRest.resources;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -11,7 +13,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriInfo;
+import javax.ws.rs.core.Response.Status;
 
 import org.koenigbrok.vic.projectRest.messanger.model.Message;
 import org.koenigbrok.vic.projectRest.messanger.service.messageService;
@@ -38,11 +44,21 @@ public class messageTestResource {
 	}
 	
 	 
-	 @POST
-		public Message  addMessage(Message message) {
-		return ms.addMessage(message);
-		}
+	// @POST
+//		public Message  addMessage(Message message) {
+//		return ms.addMessage(message);
+//		}
 	 
+	 @POST
+		public Response  addMessage(Message message, @Context UriInfo uriInfo) throws URISyntaxException {
+	
+		Message nm =  ms.addMessage(message);
+		 String newId = String.valueOf(nm.getId());
+		URI urll = uriInfo.getAbsolutePathBuilder().path(newId).build();
+		return	 Response.created(urll)
+				.entity(nm)
+				.build();
+		}
 	 
 	 @GET
 	 @Path("/{messageId}")
