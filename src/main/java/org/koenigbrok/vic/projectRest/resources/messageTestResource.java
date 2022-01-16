@@ -62,9 +62,26 @@ public class messageTestResource {
 	 
 	 @GET
 	 @Path("/{messageId}")
-	 public Message getMessage(@PathParam("messageId")  long messageId) {
+	 public Message getMessage(@PathParam("messageId")  long messageId, @Context UriInfo uriInfo) {
 		  
-		return ms.getMessage(messageId);
+		 Message message = ms.getMessage(messageId);
+		 
+		String uri = getUriForSelf(uriInfo, message);
+		 
+		 message.addLink(uri, "self");
+		  
+		  
+		  return message;
+	}
+
+
+	private String getUriForSelf(UriInfo uriInfo, Message message) {
+		String uri = uriInfo.getBaseUriBuilder()
+				 .path(messageTestResource.class)
+				 .path(Long.toString(message.getId()))
+				 .build()
+				 .toString();
+		return uri;
 	}
 	 
 	 @PUT
