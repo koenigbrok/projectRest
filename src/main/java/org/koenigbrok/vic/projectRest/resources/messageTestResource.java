@@ -16,15 +16,18 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.core.Response.Status;
+
 
 import org.koenigbrok.vic.projectRest.messanger.model.Message;
 import org.koenigbrok.vic.projectRest.messanger.service.messageService;
 
+import com.sun.jersey.api.uri.UriTemplate;
+
 @Path("/messageTestResource")
 @Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
+@Produces(value = {MediaType.APPLICATION_JSON, MediaType.TEXT_XML})
 public class messageTestResource {
 
 	messageService ms = new messageService();
@@ -34,6 +37,7 @@ public class messageTestResource {
 	public List<Message> getMessage(@QueryParam("year") int year,
 									@QueryParam("start") int start, 
 									@QueryParam("size") int size) {
+		 System.out.println("json called");
 		 if(year > 0) {
 			 return ms.getAllMessagesByYear(year);
 		 }
@@ -64,14 +68,34 @@ public class messageTestResource {
 	 @Path("/{messageId}")
 	 public Message getMessage(@PathParam("messageId")  long messageId, @Context UriInfo uriInfo) {
 		  
-		 Message message = ms.getMessage(messageId);
-		 
-		String uri = getUriForSelf(uriInfo, message);
-		 
-		 message.addLink(uri, "self");
-		  
+		 Message message = ms.getMessage(messageId);	 
+		 message.addLink(getUriForSelf(uriInfo, message), "self");
+		 message.addLink(getUriForProfile(uriInfo, message), "profile"); 
+		 message.addLink(getUriForComments(uriInfo, message), "comments"); 
 		  
 		  return message;
+	}
+
+
+	private String getUriForComments(UriInfo uriInfo, Message message) {
+	
+		URI uri = uriInfo.getBaseUriBuilder()
+				.path(messageTestResource.class)
+				.path(messageTestResource.class, "getCommentResource")
+				.path(CommentResource.class)
+				.replaceQueryParam("messageId", message.getId())
+				.build();
+		return uri.toString();
+	}
+
+
+	private String getUriForProfile(UriInfo uriInfo, Message message) {
+		URI uri = uriInfo.getBaseUriBuilder()
+				.path(ProfileResource.class)
+				.path(message.getAuthor())
+				.build();
+		
+		return uri.toString();
 	}
 
 
